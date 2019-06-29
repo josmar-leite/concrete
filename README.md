@@ -38,6 +38,7 @@ https://concrete-demo.herokuapp.com/docs
 ```bash
 Framework: NestJS
 Linguagem: TypeScript
+Banco de dados: MongoDB
 Autenticação: JWT
 Testes: e2e
 Criptogafia: MD5
