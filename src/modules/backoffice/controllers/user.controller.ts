@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Body, UseInterceptors, HttpException, HttpStatus, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, UseInterceptors, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { ValidatorInterceptor } from 'src/interceptors/validator.interceptor';
 import { Result } from 'src/modules/backoffice/models/result.model';
 import { CreateUserContract } from 'src/modules/backoffice/contracts/create-user.contract';
@@ -40,13 +40,6 @@ export class UserController {
         userNew = await this.userService.findOne(userNew._id);
 
         return new Result(null, true, userNew, null);
-    }
-
-    @Post('refresh')
-    @UseGuards(JwtAuthGuard)
-    async refreshToken(@Req() request): Promise<any> {
-        const token = await this.userService.createToken(request.user.name, request.user.email);
-        return new Result(null, true, token, null);
     }
 
     @Post('sign-up')

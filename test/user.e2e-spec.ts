@@ -1,24 +1,68 @@
-import { UserController } from 'src/modules/backoffice/controllers/user.controller';
-import { Test, TestingModule } from '@nestjs/testing';
-import 'dotenv/config';
 import * as request from 'supertest';
+import 'dotenv/config';
+import * as mongoose from 'mongoose';
+import { CreateUserDto } from './../src/modules/backoffice/dtos/create-user.dto';
+import { SignInDto } from './../src/modules/backoffice/dtos/sign-in.dto';
 
-describe('UserController (e2e)', () => {
-    let app;
+describe('Users', () => {
+    let app = 'https://concrete-demo.herokuapp.com';
 
-    beforeEach(async () => {
-        const moduleFixture: TestingModule = await Test.createTestingModule({
-            imports: [UserController],
-        }).compile();
+    let createUserDto: CreateUserDto = {
+        name: 'Teste',
+        email: 'teste@gmail.com',
+        password: '123456',
+        phones: [{
+            number: '3212-5678',
+            ddd: '81',
+        }],
+    };
 
-        app = moduleFixture.createNestApplication();
-        await app.init();
+    let signInDto: SignInDto = {
+        email: 'teste@gmail.com',
+        password: '123456',
+    };
+
+    let user = {
+        _id: String,
+        name: String,
+        email: String,
+        phones: [],
+        createdAt: Date,
+        updatedAt: Date,
+        lastLogin: Date,
+        token: String
+    };
+
+    beforeAll(async () => {
+        //await mongoose.connect(process.env.MONGO_URI);
+        //await mongoose.connection.db.dropDatabase();
     });
 
-    it('/ (GET)', () => {
-        return request(app.getHttpServer())
-            .get('/search/1')
-            .expect(200)
-            .expect('Hello word');
+    it('POST /sign-up', () => {
+        return request(app)
+            .post('/sign-up')
+            .send(createUserDto)
+            .expect(201);
+    });
+
+    it('POST /sign-in', () => {
+        return request(app)
+            .post('/sign-in')
+            .send(signInDto)
+            .expect(({ body }) => {
+                user = body.data;
+            })
+            .expect(201);
+    });
+
+    it('GET /search/:id', () => {
+        return request(app)
+            .get(`/search/${user._id}`)
+            .set('Authorization', `Bearer ${user.token}`)
+            .expect(200);
+    });
+
+    afterAll(async () => {
+        //await mongoose.disconnect();
     });
 });
