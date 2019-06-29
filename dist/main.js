@@ -25,7 +25,7 @@ function bootstrap() {
         const document = swagger_1.SwaggerModule.createDocument(app, options);
         swagger_1.SwaggerModule.setup('docs', app, document);
         app.enableCors();
-        yield app.listen(3000);
+        yield app.listen(process.env.PORT || 3000);
     });
 }
 bootstrap();
